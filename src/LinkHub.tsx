@@ -1,3 +1,4 @@
+import { useEffect, useState, useMemo } from "react";
 import {
   Github,
   Linkedin,
@@ -8,10 +9,33 @@ import {
   FileText,
   Mail,
   Facebook,
+  Sun,
+  Moon,
 } from "lucide-react";
-import { useMemo } from "react";
 
 export default function LinkHub() {
+  const [darkMode, setDarkMode] = useState(true);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+      const isDark = savedTheme === "dark";
+      setDarkMode(isDark);
+      document.documentElement.classList.toggle("dark", isDark);
+    } else {
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      setDarkMode(prefersDark);
+      document.documentElement.classList.toggle("dark", prefersDark);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("theme", darkMode ? "dark" : "light");
+    document.documentElement.classList.toggle("dark", darkMode);
+  }, [darkMode]);
+
   const profile = useMemo(
     () => ({
       name: "Oriade Yusuf",
@@ -74,72 +98,76 @@ export default function LinkHub() {
   );
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(1200px_600px_at_100%_-10%,hsl(250_85%_10%/.35),transparent),radial-gradient(800px_500px_at_-10%_0%,hsl(270_85%_15%/.35),transparent),linear-gradient(180deg,hsl(248_64%_6%),hsl(248_64%_6%))] text-white">
-      <section className="max-w-xl mx-auto px-6 pt-16 pb-24">
-        <div className="relative overflow-hidden rounded-3xl bg-white/5 ring-1 ring-white/10 shadow-[0_10px_40px_-5px_rgba(0,0,0,0.5)] backdrop-blur-md">
-          <div className="pointer-events-none absolute -top-24 -right-24 h-48 w-48 rounded-full bg-gradient-to-tr from-indigo-600/40 to-violet-600/40 blur-3xl" />
+    <main className="min-h-screen bg-white text-black dark:bg-[radial-gradient(1200px_600px_at_100%_-10%,hsl(250_85%_10%/.35),transparent),radial-gradient(800px_500px_at_-10%_0%,hsl(270_85%_15%/.35),transparent),linear-gradient(180deg,hsl(248_64%_6%),hsl(248_64%_6%))] dark:text-white transition-colors">
+      <section className="max-w-lg sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto px-6 pt-16 pb-24">
+        {/* Theme Toggle */}
+        <button
+          onClick={() => setDarkMode(!darkMode)}
+          className="mb-6 p-2 rounded-full border border-gray-300 dark:border-white/20 hover:bg-gray-200 dark:hover:bg-white/10 transition"
+        >
+          {darkMode ? (
+            <Sun className="h-5 w-5" />
+          ) : (
+            <Moon className="h-5 w-5" />
+          )}
+        </button>
+
+        {/* Profile Card */}
+        <div className="relative overflow-hidden rounded-3xl bg-gray-100 dark:bg-white/5 ring-1 ring-black/10 dark:ring-white/10 shadow-lg backdrop-blur-md">
           <div className="p-6 sm:p-8">
             <div className="flex items-center gap-4">
               {profile.avatarUrl ? (
                 <img
                   src={profile.avatarUrl}
                   alt={profile.name}
-                  className="h-16 w-16 rounded-2xl object-cover ring-1 ring-white/20"
+                  className="h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 rounded-2xl object-cover ring-1 ring-black/10 dark:ring-white/20"
                 />
               ) : (
-                <div className="h-16 w-16 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 ring-1 ring-white/20 grid place-items-center text-2xl font-bold">
+                <div className="h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 ring-1 ring-black/10 dark:ring-white/20 grid place-items-center text-2xl sm:text-3xl md:text-4xl font-bold text-white">
                   {initials(profile.name)}
                 </div>
               )}
               <div className="min-w-0">
-                <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">
+                <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold tracking-tight">
                   {profile.name}
                 </h1>
-                <p className="mt-1 text-sm sm:text-base text-white/70">
+                <p className="mt-1 text-sm sm:text-base md:text-lg text-gray-600 dark:text-white/70">
                   {profile.title}
                 </p>
-                <p className="mt-1 text-xs text-white/50">{profile.location}</p>
+                <p className="mt-1 text-xs sm:text-sm md:text-base text-gray-500 dark:text-white/50">
+                  {profile.location}
+                </p>
               </div>
-            </div>
-            <div className="mt-6">
-              <a
-                href={profile.links[0].href}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="group inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
-              >
-                <LinkIcon className="h-4 w-4" />
-                <span className="truncate">{profile.links[0].label}</span>
-              </a>
             </div>
           </div>
         </div>
-        <ul className="mt-8 grid gap-4">
+
+        {/* Links */}
+        <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {profile.links.map((link) => (
             <li key={link.label}>
               <a
                 href={link.href}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="group block rounded-2xl border border-white/10 bg-white/5 p-[2px] focus:outline-none focus:ring-2 focus:ring-white/20"
+                className="group block rounded-2xl border border-gray-300 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-[2px] focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
               >
                 <div
                   className={`relative overflow-hidden rounded-[14px] bg-gradient-to-r ${link.accent}`}
                 >
-                  <div className="absolute inset-0 opacity-20 mix-blend-overlay bg-[radial-gradient(1200px_200px_at_0%_0%,white,transparent)]" />
                   <div className="relative flex items-center gap-3 px-4 py-4">
-                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-white/15 ring-1 ring-white/20">
-                      <link.icon className="h-5 w-5" />
+                    <div className="grid h-10 w-10 sm:h-12 sm:w-12 place-items-center rounded-xl bg-white/15 ring-1 ring-black/10 dark:ring-white/20">
+                      <link.icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-base font-medium tracking-tight drop-shadow-sm">
+                      <p className="text-base sm:text-lg font-medium tracking-tight drop-shadow-sm">
                         {link.label}
                       </p>
-                      <p className="text-xs text-white/80 truncate">
+                      <p className="text-xs sm:text-sm text-white/80 truncate">
                         {cleanUrl(link.href)}
                       </p>
                     </div>
-                    <span className="ml-auto text-sm opacity-0 transition-opacity group-hover:opacity-100">
+                    <span className="ml-auto text-xs sm:text-sm opacity-0 transition-opacity group-hover:opacity-100">
                       Open ↗
                     </span>
                   </div>
@@ -148,7 +176,9 @@ export default function LinkHub() {
             </li>
           ))}
         </ul>
-        <footer className="mt-10 flex items-center justify-between text-xs text-white/50">
+
+        {/* Footer */}
+        <footer className="mt-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs sm:text-sm text-gray-600 dark:text-white/50">
           <p>
             © {new Date().getFullYear()} {profile.name}
           </p>
