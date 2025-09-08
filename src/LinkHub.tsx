@@ -16,6 +16,22 @@ export default function LinkHub() {
   const [darkMode, setDarkMode] = useState(true);
 
   useEffect(() => {
+    document.title = "Oriade Yusuf | Profile";
+
+    const favicon = document.getElementById("favicon") as HTMLLinkElement;
+    if (favicon) {
+      favicon.href = "/Profile2.jpg";
+    } else {
+      const newFavicon = document.createElement("link");
+      newFavicon.id = "favicon";
+      newFavicon.rel = "icon";
+      newFavicon.type = "image/png";
+      newFavicon.href = "/Profile2.jpg";
+      document.head.appendChild(newFavicon);
+    }
+  }, []);
+
+  useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) {
       const isDark = savedTheme === "dark";
@@ -99,7 +115,6 @@ export default function LinkHub() {
   return (
     <main className="min-h-screen bg-white text-black dark:bg-[radial-gradient(1200px_600px_at_100%_-10%,hsl(250_85%_10%/.35),transparent),radial-gradient(800px_500px_at_-10%_0%,hsl(270_85%_15%/.35),transparent),linear-gradient(180deg,hsl(248_64%_6%),hsl(248_64%_6%))] dark:text-white transition-colors">
       <section className="max-w-lg sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto px-4 sm:px-6 pt-10 sm:pt-16 pb-16 sm:pb-24">
-        {/* Theme Toggle */}
         <button
           onClick={() => setDarkMode(!darkMode)}
           className="mb-6 p-2 rounded-full border border-gray-300 dark:border-white/20 hover:bg-gray-200 dark:hover:bg-white/10 transition"
@@ -111,7 +126,6 @@ export default function LinkHub() {
           )}
         </button>
 
-        {/* Profile Card */}
         <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gray-100 dark:bg-white/5 ring-1 ring-black/10 dark:ring-white/10 shadow-lg backdrop-blur-md">
           <div className="p-4 sm:p-6 md:p-8">
             <div className="flex flex-wrap items-center gap-2 sm:gap-4">
@@ -141,7 +155,6 @@ export default function LinkHub() {
           </div>
         </div>
 
-        {/* Links */}
         <ul className="mt-6 grid gap-2 sm:gap-4 grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {profile.links.map((link) => (
             <li key={link.label}>
@@ -176,7 +189,6 @@ export default function LinkHub() {
           ))}
         </ul>
 
-        {/* Footer */}
         <footer className="mt-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-[10px] sm:text-xs md:text-sm text-gray-600 dark:text-white/50">
           <p>
             © {new Date().getFullYear()} {profile.name}
