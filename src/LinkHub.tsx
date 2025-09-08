@@ -2,7 +2,6 @@ import { useEffect, useState, useMemo } from "react";
 import {
   Github,
   Linkedin,
-  Link as LinkIcon,
   Instagram,
   Twitter,
   Globe,
