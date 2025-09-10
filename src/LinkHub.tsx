@@ -67,7 +67,7 @@ export default function LinkHub() {
         },
         {
           label: "📄 Resume / CV",
-          href: "#",
+          href: "/Oriade Yusuf CV..pdf",
           icon: FileText,
           accent: "from-emerald-500 to-teal-500",
         },
