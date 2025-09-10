@@ -16,8 +16,6 @@ export default function LinkHub() {
   const [darkMode, setDarkMode] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
 
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
   useEffect(() => {
     document.title = "Oriade Yusuf | Profile";
 
@@ -53,29 +51,6 @@ export default function LinkHub() {
     localStorage.setItem("theme", darkMode ? "dark" : "light");
     document.documentElement.classList.toggle("dark", darkMode);
   }, [darkMode]);
-
-  const handleDownload = () => {
-    if (isMobile) {
-      // 📱 Mobile → open in new tab
-      window.open("/OriadeYusufCV.pdf", "_blank");
-    } else {
-      // 💻 Desktop → force download
-      const link = document.createElement("a");
-      link.href = "/OriadeYusufCV.pdf";
-      link.download = "Oriade_Yusuf_CV.pdf";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-    setShowPopup(false);
-  };
-
-  const handleCVClick = () => {
-    setShowPopup(true);
-    setTimeout(() => {
-      handleDownload();
-    }, 3000);
-  };
 
   const profile = useMemo(
     () => ({
@@ -138,6 +113,23 @@ export default function LinkHub() {
     []
   );
 
+  const handleDownload = () => {
+    const link = document.createElement("a");
+    link.href = "/OriadeYusufCV.pdf";
+    link.download = "Oriade_Yusuf_CV.pdf";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleCVClick = () => {
+    setShowPopup(true);
+    setTimeout(() => {
+      handleDownload();
+      setShowPopup(false);
+    }, 3000);
+  };
+
   return (
     <main className="min-h-screen bg-white text-black dark:bg-[radial-gradient(1200px_600px_at_100%_-10%,hsl(250_85%_10%/.35),transparent),radial-gradient(800px_500px_at_-10%_0%,hsl(270_85%_15%/.35),transparent),linear-gradient(180deg,hsl(248_64%_6%),hsl(248_64%_6%))] dark:text-white transition-colors">
       <section className="max-w-lg sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto px-4 sm:px-6 pt-10 sm:pt-16 pb-16 sm:pb-24">
@@ -184,11 +176,10 @@ export default function LinkHub() {
         <ul className="mt-6 grid gap-2 sm:gap-4 grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {profile.links.map((link) => (
             <li key={link.label}>
-              {link.label.includes("Resume") ? (
-                // 📄 CV download popup
+              {link.label === "📄 Resume / CV" ? (
                 <button
                   onClick={handleCVClick}
-                  className="group w-full block rounded-xl sm:rounded-2xl border border-gray-300 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-[1px] sm:p-[2px] focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                  className="group w-full text-left block rounded-xl sm:rounded-2xl border border-gray-300 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-[1px] sm:p-[2px] focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
                 >
                   <div
                     className={`relative overflow-hidden rounded-lg sm:rounded-[14px] bg-gradient-to-r ${link.accent}`}
@@ -206,7 +197,7 @@ export default function LinkHub() {
                         </p>
                       </div>
                       <span className="ml-auto text-[10px] sm:text-xs opacity-0 transition-opacity group-hover:opacity-100">
-                        {isMobile ? "Open ↗" : "Download ↗"}
+                        Download ↗
                       </span>
                     </div>
                   </div>
@@ -247,20 +238,16 @@ export default function LinkHub() {
         {showPopup && (
           <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg text-center">
-              <p className="text-sm sm:text-base text-gray-700 dark:text-gray-200">
-                {isMobile
-                  ? "Your CV will open in 3 seconds."
-                  : "Your CV will start downloading in 3 seconds."}
+              <p className="text-gray-700 dark:text-gray-200">
+                Your CV will start downloading in <b>3 seconds</b>.
               </p>
-              <p className="mt-2 text-sm sm:text-base">
-                Do you want to {isMobile ? "open now" : "download now"}?
-              </p>
+              <p className="mt-2">Do you want to download now?</p>
               <div className="mt-4 flex gap-3 justify-center">
                 <button
                   onClick={handleDownload}
                   className="px-3 py-1 bg-emerald-500 text-white rounded-md hover:bg-emerald-600 transition"
                 >
-                  {isMobile ? "Open Now" : "Download Now"}
+                  Download Now
                 </button>
                 <button
                   onClick={() => setShowPopup(false)}
@@ -293,7 +280,7 @@ function initials(name: string) {
 
 function cleanUrl(url: string) {
   try {
-    const u = new URL(url);
+    const u = new URL(url, window.location.origin);
     return u.host + (u.pathname !== "/" ? u.pathname : "");
   } catch {
     return url;
