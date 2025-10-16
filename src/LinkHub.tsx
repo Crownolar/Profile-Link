@@ -113,28 +113,13 @@ const LinkHub = () => {
     []
   );
 
-  // const handleDownload = () => {
-  //   const link = document.createElement("a");
-  //   link.href = "/OriadeYusufCV.pdf";
-  //   link.download = "Oriade_Yusuf_CV.pdf";
-  //   document.body.appendChild(link);
-  //   link.click();
-  //   document.body.removeChild(link);
-  // };
-
   const handleDownload = () => {
-    fetch("/OriadeYusufCV.pdf")
-      .then((response) => {
-        if (!response.ok) throw new Error("File not found");
-        return response.blob();
-      })
-      .then((blob) => {
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = "Oriade_Yusuf_CV.pdf";
-        link.click();
-      })
-      .catch(() => alert("Download failed. Please try again later."));
+    const link = document.createElement("a");
+    link.href = "/OriadeYusufCV.pdf";
+    link.download = "Oriade_Yusuf_CV.pdf";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleCVClick = () => {
