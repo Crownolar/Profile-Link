@@ -12,7 +12,7 @@ import {
   Moon,
 } from "lucide-react";
 
-export default function LinkHub() {
+const LinkHub = () => {
   const [darkMode, setDarkMode] = useState(true);
   const [showPopup, setShowPopup] = useState(false);
 
@@ -113,13 +113,28 @@ export default function LinkHub() {
     []
   );
 
+  // const handleDownload = () => {
+  //   const link = document.createElement("a");
+  //   link.href = "/OriadeYusufCV.pdf";
+  //   link.download = "Oriade_Yusuf_CV.pdf";
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  // };
+
   const handleDownload = () => {
-    const link = document.createElement("a");
-    link.href = "/OriadeYusufCV.pdf";
-    link.download = "Oriade_Yusuf_CV.pdf";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    fetch("/OriadeYusufCV.pdf")
+      .then((response) => {
+        if (!response.ok) throw new Error("File not found");
+        return response.blob();
+      })
+      .then((blob) => {
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "Oriade_Yusuf_CV.pdf";
+        link.click();
+      })
+      .catch(() => alert("Download failed. Please try again later."));
   };
 
   const handleCVClick = () => {
@@ -269,20 +284,22 @@ export default function LinkHub() {
       </section>
     </main>
   );
-}
+};
 
-function initials(name: string) {
+const initials = (name: string) => {
   const parts = name.trim().split(/\s+/);
   const first = parts[0]?.[0] ?? "C";
   const last = parts.length > 1 ? parts[parts.length - 1][0] : "O";
   return (first + last).toUpperCase();
-}
+};
 
-function cleanUrl(url: string) {
+const cleanUrl = (url: string) => {
   try {
     const u = new URL(url, window.location.origin);
     return u.host + (u.pathname !== "/" ? u.pathname : "");
   } catch {
     return url;
   }
-}
+};
+
+export default LinkHub;
